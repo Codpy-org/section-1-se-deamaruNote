@@ -6,67 +6,47 @@ def move_location(game_state, direction):
         return game_state
     
     x, y = game_state["current_position"]
+    width, height = game_state["map_size"]
     
-    # Update position based on direction
-    if direction == "up" and y > 0:
-        y -= 1
-    elif direction == "down" and y < game_state["map_size"][1] - 1:
-        y += 1
-    elif direction == "left" and x > 0:
-        x -= 1
-    elif direction == "right" and x < game_state["map_size"][0] - 1:
-        x += 1
-    elif direction == "up" and y > 0:
-        y += 1
-    elif direction == "down" and y < game_state["map_size"][1] - 1:
-        y -= 1
-    elif direction == "left" and x > 0:
-        x += 1
-    elif direction == "right" and x < game_state["map_size"][0] - 1:
-        x -= 1
-    elif direction == "up" and y > 0:
-        x += 1
-    elif direction == "down" and y < game_state["map_size"][1] - 1:
-        x -= 1
-    elif direction == "left" and x > 0:
-        y += 1
-    elif direction == "right" and x < game_state["map_size"][0] - 1:
-        y -= 1
-    elif direction == "up" and y > 0:
-        y += 1
-    elif direction == "down" and y < game_state["map_size"][1] - 1:
-        y -= 1
-    elif direction == "left" and x > 0:
-        x += 1
-    elif direction == "right" and x < game_state["map_size"][0] - 1:
-        x -= 1
-    elif direction == "up" and y > 0:
-        x += 1
-    elif direction == "down" and y < game_state["map_size"][1] - 1:
-        x -= 1
-    elif direction == "left" and x > 0:
-        y += 1
-    elif direction == "right" and x < game_state["map_size"][0] - 1:
-        y -= 1
+    # Define movement mapping
+    move_map = {
+        "up": (0, -1),
+        "down": (0, 1),
+        "left": (-1, 0),
+        "right": (1, 0)
+    }
+    
+    # Check if the direction is valid
+    if direction in move_map:
+        dx, dy = move_map[direction]
+        new_x = x + dx
+        new_y = y + dy
+        
+        # Ensure new position is within bounds
+        if 0 <= new_x < width and 0 <= new_y < height:
+            new_position = [new_x, new_y]
+        else:
+            return game_state  # Out of bounds, no movement
+    else:
+        return game_state  # Invalid direction, no movement
 
-    new_position = [x, y]
-
+    # Check if the new position hits an obstacle
     if hit_obstacle(new_position, game_state["current_level_name"]):
-        # Update health
+        # Update health if there's an obstacle
         game_state["health"] -= 1
     else:
-        # Update path
+        # Update path if the new position is not an obstacle
         if new_position not in game_state["path"]:
             game_state["path"].append(new_position)
-
+        
         # Update position
         game_state["current_position"] = new_position
 
+    # Check if the player has arrived at the destination
     if arrive_at_destination(game_state["current_level_name"], game_state["current_position"]):
-        # Game won
-        game_state["health"] = 666
+        game_state["health"] = 666  # Game won, set health to 666
 
-    # Update database
+    # Update database with the new game state
     save_game_state(game_state['username'], game_state["current_level_name"], game_state["map_size"],
                     game_state["health"], game_state["path"], game_state["current_position"])
 
