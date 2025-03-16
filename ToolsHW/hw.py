@@ -1,5 +1,8 @@
 import webbrowser, sys, time, random, os  
 
+# 待修重點，五層迴圈。
+# 公因數解決、os.remove危險指令
+
 X1 = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 A1 = [i for i in range(100)]  
 B1 = False  
